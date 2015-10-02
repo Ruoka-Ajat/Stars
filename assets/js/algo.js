@@ -33,14 +33,17 @@ function basicWalker(endPoint, dataset, starPairs, solution)
     {
         var neighbours = []
         neighbours = findNeighbours(currStar, dataset, starPairs, neighbours)
-        var dist = -1
+        var a = -1; //angle
+        var dist = 0;
         var pair
         for(var neighbour in neighbours)
         {
             neighbour = neighbours[neighbour]
-            if(starPairs[JSON.stringify(neighbour)] < dist || JSON.stringify([neighbour[1],neighbour[0]]) < dist || dist == -1)
+            var b = angle(getStar(currStar, dataset), getStar(neighbour[1],dataset), getStar(endPoint, dataset))
+            if(b < a || a == -1)
             {
                 dist = starPairs[JSON.stringify(neighbour)]
+                a = b
                 pair = neighbour
             }
         }
@@ -166,5 +169,17 @@ function angle(current, star, endpoint)
     else
     {
         throw new Error("HALP!")
+    }
+}
+
+function getStar(id, dataset)
+{
+    for(key in dataset["stars"])
+    {
+        var star = dataset["stars"][key]
+        if(star["_id"] == id)
+        {
+            return star
+        }
     }
 }
