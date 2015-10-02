@@ -20,10 +20,36 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     // do your magic here
     var starPairs = []
     formWeb(starPairs, dataset);
-    console.log(starPairs[JSON.stringify([395, 499])])
+    basicWalker(dataset["endPoint"], dataset, starPairs, solution)
     
     // required return
     return solution;
+}
+
+function basicWalker(endPoint, dataset, starPairs, solution)
+{
+    var currStar = 0
+    while(currStar != endPoint)
+    {
+        var neighbours = []
+        neighbours = findNeighbours(currStar, dataset, starPairs, neighbours)
+        var dist = -1
+        var pair
+        for(var neighbour in neighbours)
+        {
+            console.log("I happen!")
+            if(starPairs[JSON.stringify(neighbour)] < dist || JSON.stringify([neighbour[1],neighbour[0]]) < dist || dist == -1)
+            {
+                dist = starPairs[JSON.stringify(neighbour)]
+                pair = neighbour
+            }
+        }
+        solution["length"] = solution["length"] + dist
+        solution["path"].push(pair[1])
+        currStar = pair[1]
+        solution["connections"].push(pair)
+    }
+    console.log("Path found!..Maybe")
 }
 
 function formWeb(starPairs, dataset)
@@ -91,11 +117,14 @@ function findNeighbours(star, dataset, starPairs, neighbours)
     var stars = dataset["stars"]
     for(var star2 in stars)
     {
-        if(JSON.stringify([star["_id"], star2["_id"]]) in starPairs && JSON.stringify([star2["_id"], star["_id"]]) in starPairs)
+        star2 = star2["_id"]
+        if(containsObject([star, star2], starPairs) || containsObject(JSON.stringify([star2, star]), starPairs))
         {
+            console.log("Added neighbour")
             neighbours.push([star, star2])
         }
     }
+    return neighbours
 }
 
 function dotproduct(star1, star2)
@@ -135,4 +164,18 @@ function angle(star1, star2)
     {
         throw new Error("HALP!")
     }
+}
+
+function containsObject(obj, list) 
+{
+    for(var obj2 in list)
+    {
+        if(JSON.stringify(obj) == JSON.stringify(obj2))
+        {
+            console.log("List had object")
+            return true;
+        }
+    }
+    console.log("List did not have object")
+    return false;
 }
