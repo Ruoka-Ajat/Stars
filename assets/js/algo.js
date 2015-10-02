@@ -85,3 +85,42 @@ function hasPosition(star)
 
     return false
 }
+
+function dotproduct(star1, star2)
+{
+    if(hasPosition(star1) && hasPosition(star2))
+    {
+        var star1Pos = star1["position"]
+        var star2Pos = star2["position"]
+        return (star1Pos["x"]*star2Pos["x"] + star1Pos["y"]*star2Pos["y"] + star1Pos["z"]*star2Pos["z"])
+    }
+    else
+    {
+        throw new Error("HALP!")
+    }
+}
+
+function length(star1)
+{
+    if(hasPosition(star1))
+    {
+        var star1Pos = star1["position"];
+        return Math.sqrt(Math.pow(star1Pos["x"],2)+Math.pow(star1Pos["y"],2)+Math.pow(star1Pos["z"],2));
+    }
+    else
+    {
+        throw new Error("HALP!");
+    }
+}
+
+function angle(star1, star2)
+{
+        if(hasPosition(star1) && hasPosition(star2))
+    {
+        return Math.acos(dotproduct(star1,star2) / (length(star1)*length(star2)))
+    }
+    else
+    {
+        throw new Error("HALP!")
+    }
+}
