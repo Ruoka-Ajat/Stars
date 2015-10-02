@@ -18,26 +18,25 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     }
 
     // do your magic here
+    var starPairs = []
+    var distances = []
+    
+    // required return
+    return solution;
+}
+
+function formWeb(starPairs, distances)
+{
     for(key in dataset["stars"])
     {
         if(dataset["stars"].hasOwnProperty(key))
         {
             var star = dataset["stars"][key];
-            for(key2 in dataset["stars"])
-            {
-                if(dataset["stars"].hasOwnProperty(key2))
-                {
-                    var star2 = dataset["stars"][key2];
-                    console.log(distance(star,star2))
-            
-                }
-            }
+            //Add each star - neighbourStar pair to starPairs
+            //Add each star- neighbourStar distance to distances
         }
     }
-    // required return
-    return solution;
 }
-
 // add your support functions in here
 function distance(star1, star2)
 {
