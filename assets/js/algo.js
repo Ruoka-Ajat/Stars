@@ -86,6 +86,18 @@ function hasPosition(star)
     return false
 }
 
+function findNeighbours(star, dataset, starPairs, neighbours)
+{
+    var stars = dataset["stars"]
+    for(var star2 in stars)
+    {
+        if([star, star2] in starPairs && [star2, star] in starPairs)
+        {
+            neighbours.push([star, star2])
+        }
+    }
+}
+
 function dotproduct(star1, star2)
 {
     if(hasPosition(star1) && hasPosition(star2))
@@ -115,7 +127,7 @@ function length(star1)
 
 function angle(star1, star2)
 {
-        if(hasPosition(star1) && hasPosition(star2))
+    if(hasPosition(star1) && hasPosition(star2))
     {
         return Math.acos(dotproduct(star1,star2) / (length(star1)*length(star2)))
     }
