@@ -20,7 +20,7 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     // do your magic here
     var starPairs = []
     formWeb(starPairs, dataset);
-    console.log("Blaa!")
+    console.log(starPairs[JSON.stringify([395, 499])])
     
     // required return
     return solution;
@@ -42,15 +42,15 @@ function formWeb(starPairs, dataset)
                 }
                 if(stars.hasOwnProperty(key2))
                 {
-                    var star2 = stars[key]
+                    var star2 = stars[key2]
                     var dist = distance(star, star2)
                     if(dist < 30)
                     {
-                        if([star2, star] in starPairs)
+                        if(JSON.stringify([star2["_id"], star["_id"]]) in starPairs)
                         {
                             continue;
                         }
-                        starPairs[[star, star2]] = dist
+                        starPairs[JSON.stringify([star["_id"], star2["_id"]])] = dist
                     }
                 }
             }
@@ -91,7 +91,7 @@ function findNeighbours(star, dataset, starPairs, neighbours)
     var stars = dataset["stars"]
     for(var star2 in stars)
     {
-        if([star, star2] in starPairs && [star2, star] in starPairs)
+        if(JSON.stringify([star["_id"], star2["_id"]]) in starPairs && JSON.stringify([star2["_id"], star["_id"]]) in starPairs)
         {
             neighbours.push([star, star2])
         }
