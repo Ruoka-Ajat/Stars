@@ -20,7 +20,7 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     // do your magic here
     var starPairs = []
     formWeb(starPairs, dataset);
-    basicWalker(dataset["endPoint"], dataset, starPairs, solution)
+    basicWalker(parseInt(dataset["endPoint"]), dataset, starPairs, solution)
     
     // required return
     return solution;
@@ -29,7 +29,7 @@ MTHONALGO.solveStellarRoute = function(dataset) {
 function basicWalker(endPoint, dataset, starPairs, solution)
 {
     var currStar = 0
-    while(currStar != endPoint)
+    while(parseInt(currStar) != parseInt(endPoint))
     {
         var neighbours = []
         neighbours = findNeighbours(currStar, dataset, starPairs, neighbours)
@@ -42,12 +42,14 @@ function basicWalker(endPoint, dataset, starPairs, solution)
             {
                 dist = starPairs[JSON.stringify(neighbour)]
                 pair = neighbour
+                console.log(pair)
             }
         }
         solution["length"] = solution["length"] + dist
         solution["path"].push(pair[1])
         currStar = pair[1]
         solution["connections"].push(pair)
+        console.log(currStar)
     }
     console.log("Path found!..Maybe")
 }
@@ -117,8 +119,8 @@ function findNeighbours(star, dataset, starPairs, neighbours)
     var stars = dataset["stars"]
     for(var star2 in stars)
     {
-        star2 = star2["_id"]
-        if(containsObject([star, star2], starPairs) || containsObject(JSON.stringify([star2, star]), starPairs))
+        star2 = stars[star2]["_id"]
+        if(JSON.stringify([star, star2]) in starPairs || JSON.stringify([star2, star]) in starPairs)
         {
             console.log("Added neighbour")
             neighbours.push([star, star2])
@@ -164,18 +166,4 @@ function angle(star1, star2)
     {
         throw new Error("HALP!")
     }
-}
-
-function containsObject(obj, list) 
-{
-    for(var obj2 in list)
-    {
-        if(JSON.stringify(obj) == JSON.stringify(obj2))
-        {
-            console.log("List had object")
-            return true;
-        }
-    }
-    console.log("List did not have object")
-    return false;
 }
