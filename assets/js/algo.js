@@ -43,9 +43,9 @@ function distance(star1, star2)
 {
     if(hasPosition(star1) && hasPosition(star2))
     {
-        star1 = star1["position"]
-        star2 = star2["position"]
-        return Math.sqrt(Math.pow((star1["x"]-star2["x"]),2)+Math.pow((star1["y"]-star2["y"]),2)+Math.pow((star1["z"]-star2["z"]),2))
+        var star1Pos = star1["position"]
+        var star2Pos = star2["position"]
+        return Math.sqrt(Math.pow((star1Pos["x"]-star2Pos["x"]),2)+Math.pow((star1Pos["y"]-star2Pos["y"]),2)+Math.pow((star1Pos["z"]-star2Pos["z"]),2))
     }
     else
     {
@@ -55,10 +55,14 @@ function distance(star1, star2)
 
 function hasPosition(star)
 {
-    var pos = star["position"]
-    if(pos.hasOwnProperty("x") && pos.hasOwnProperty("y") && pos.hasOwnProperty("z"))
+    if(star.hasOwnProperty("position"))
     {
-        return true
+        var pos = star["position"]
+        if(pos.hasOwnProperty("x") && pos.hasOwnProperty("y") && pos.hasOwnProperty("z"))
+        {
+            return true
+        }
     }
+
     return false
 }
