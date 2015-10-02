@@ -18,7 +18,14 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     }
 
     // do your magic here
-
+    for(key in dataset["stars"])
+    {
+        if(dataset["stars"].hasOwnProperty(key))
+        {
+            var star = dataset["stars"][key];
+            console.log(star["_id"])
+        }
+    }
     // required return
     return solution;
 }
