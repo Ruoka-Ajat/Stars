@@ -127,13 +127,14 @@ function findNeighbours(star, dataset, starPairs, neighbours)
     return neighbours
 }
 
-function dotproduct(star1, star2)
+function dotproduct(star1, star2, star3)
 {
-    if(hasPosition(star1) && hasPosition(star2))
+    if(hasPosition(star1) && hasPosition(star2) && hasPosition(star3))
     {
         var star1Pos = star1["position"]
         var star2Pos = star2["position"]
-        return (star1Pos["x"]*star2Pos["x"] + star1Pos["y"]*star2Pos["y"] + star1Pos["z"]*star2Pos["z"])
+        var star3Pos = star3["position"]
+        return ((star3Pos["x"]-star1Pos["x"])*(star2Pos["x"]-star1Pos["x"]) + (star3Pos["y"]-star1Pos["y"])*(star2Pos["y"]-star1Pos["y"]) + (star3Pos["z"]-star1Pos["z"])*(star2Pos["z"]-star1Pos["z"]))
     }
     else
     {
@@ -141,12 +142,13 @@ function dotproduct(star1, star2)
     }
 }
 
-function length(star1)
+function length(star1,star2)
 {
-    if(hasPosition(star1))
+    if(hasPosition(star1) && hasPosition(star2))
     {
         var star1Pos = star1["position"];
-        return Math.sqrt(Math.pow(star1Pos["x"],2)+Math.pow(star1Pos["y"],2)+Math.pow(star1Pos["z"],2));
+        var star2Pos = star2["position"];
+        return Math.sqrt(Math.pow(star2Pos["x"]-star1Pos["x"],2)+Math.pow(star2Pos["y"]-star1Pos["y"],2)+Math.pow(star2Pos["z"]-star1Pos["z"],2));
     }
     else
     {
@@ -154,11 +156,12 @@ function length(star1)
     }
 }
 
-function angle(star1, star2)
+function angle(current, star, endpoint)
 {
-    if(hasPosition(star1) && hasPosition(star2))
+    // computes angle between lines drawn between (current,endpoint) and (current, star)
+    if(hasPosition(current) && hasPosition(endpoint) && hasPosition(star))
     {
-        return Math.acos(dotproduct(star1,star2) / (length(star1)*length(star2)))
+        return Math.acos(dotproduct(current,endpoint, star) / (length(current,endpoint)*length(current,star)))
     }
     else
     {
