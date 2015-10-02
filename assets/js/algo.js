@@ -37,12 +37,11 @@ function basicWalker(endPoint, dataset, starPairs, solution)
         var pair
         for(var neighbour in neighbours)
         {
-            console.log("I happen!")
+            neighbour = neighbours[neighbour]
             if(starPairs[JSON.stringify(neighbour)] < dist || JSON.stringify([neighbour[1],neighbour[0]]) < dist || dist == -1)
             {
                 dist = starPairs[JSON.stringify(neighbour)]
                 pair = neighbour
-                console.log(pair)
             }
         }
         solution["length"] = solution["length"] + dist
@@ -122,7 +121,6 @@ function findNeighbours(star, dataset, starPairs, neighbours)
         star2 = stars[star2]["_id"]
         if(JSON.stringify([star, star2]) in starPairs || JSON.stringify([star2, star]) in starPairs)
         {
-            console.log("Added neighbour")
             neighbours.push([star, star2])
         }
     }
