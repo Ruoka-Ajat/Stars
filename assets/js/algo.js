@@ -26,6 +26,19 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     return solution;
 }
 
+function getDist(star1, star2)
+{
+    if(JSON.stringify([star1, star2]) in starPairs)
+    {
+        return starPairs[JSON.stringify([star1, star2])]
+    }
+    if(JSON.stringify([star2, star1]) in starPairs)
+    {
+        reuturn starPairs[JSON.stringify([star2, star1])]
+    }
+    throw new Error("Failed to get distance between stars " + star1 + " and " + star2 ".")
+}
+
 function basicWalker(endPoint, dataset, starPairs, solution)
 {
     var currStar = 0
