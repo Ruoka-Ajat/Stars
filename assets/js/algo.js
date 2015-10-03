@@ -30,7 +30,6 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     distance = []
     //starPairs = []
     dataset = []
-    console.log("This happens")
     solution.path = shortestPath(path, end)
     
     // required return
@@ -39,18 +38,16 @@ MTHONALGO.solveStellarRoute = function(dataset) {
 
 function shortestPath(path, endPoint)
 {
-    console.log("Finding the final path!")
-    var u = path[endPoint]
-    console.log(u)
     var reversePath = []
     var finalPath = []
+    reversePath.push(endPoint)
+    var u = path[endPoint]
     while(!(u==0))
     {
         reversePath.push(u)
-        console.log(u)
         u=path[u]
     }
-    console.log("Second part")
+    reversePath.push(0)
     while(reversePath.length > 0)
     {
         finalPath.push(reversePath.pop())
@@ -60,8 +57,6 @@ function shortestPath(path, endPoint)
 
 function dijkstra(dataset, starPairs, path, distance)
 {
-    console.log("Dijkstra start")
-    console.log(starPairs)
     var stars = dataset["stars"]
     
     //var queue = new PriorityQueue({ comparator: function(a, b) { return a[1] - b[1]; }})
@@ -83,7 +78,7 @@ function dijkstra(dataset, starPairs, path, distance)
         for(var neighbour in neighbours)
         {
             neighbour=neighbours[neighbour][1]
-            relax(star, neighbour, distance, path)
+            relax(star, neighbour, starPairs, distance, path)
         }
     }
 }
@@ -120,10 +115,8 @@ function initializeSingleSource(dataset, distance, path)
 
 function relax(u, v, starPairs, distance, path)
 {
-    console.log(getDist(u, v, starPairs))
     if(distance[v] > distance[u] + getDist(u,v,starPairs))
     {
-        console.log("Relaxing")
         distance[v] = distance[u] + getDist(u,v,starPairs)
         path[v] = u
     }
@@ -131,7 +124,6 @@ function relax(u, v, starPairs, distance, path)
 
 function getDist(star1, star2, starPairs)
 {
-    console.log(JSON.stringify(starPairs))
     if(JSON.stringify([star1, star2]) in starPairs)
     {
         return starPairs[JSON.stringify([star1, star2])]
