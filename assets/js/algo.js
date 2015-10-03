@@ -19,14 +19,11 @@ MTHONALGO.solveStellarRoute = function(dataset) {
 
     // do your magic here
     var starPairs = []
-    console.log("Before web formation")
     formWeb(starPairs, dataset);
-    console.log("After web formation")
     //basicWalker(parseInt(dataset["endPoint"]), dataset, starPairs, solution)
     var path = []
     var distance = []
     dijkstra(dataset, starPairs, path, distance)
-    console.log("Dijkstra done")
     var end = dataset["endPoint"]
     
     solution.length = distance[end]
@@ -36,13 +33,12 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     solution.path = shortestPath(path, end)
     //fillConnections(solution)
     // required return
-    console.log("After shortestPath()")
-    console.log(solution.path)
-    console.log(solution.length)
-    for(var i = 1; i < solution.path.length; i++)
+    console.log("Path: " + solution.path)
+    console.log("Length: " + solution.length)
+    /*for(var i = 1; i < solution.path.length; i++)
     {
         console.log(getDistance(getStar(solution.path[i-1], dataset), getStar(solution.path[i], dataset))) 
-    }
+    }*/
     return solution;
 }
 
@@ -62,14 +58,12 @@ function shortestPath(path, endPoint)
     var u = path[endPoint]
     while(!(u==0))
     {
-        console.log("Shortest path first while")
         reversePath.push(u)
         u=path[u]
     }
     reversePath.push(0)
     while(reversePath.length > 0)
     {
-        console.log("Shortest path second while")
         finalPath.push(reversePath.pop())
     }
     return finalPath
@@ -86,7 +80,6 @@ function dijkstra(dataset, starPairs, path, distance)
     var S = []
     while(S.length < stars.length)
     {
-        console.log("Dijkstra while loop")
         var star = findSmallest(stars, S, distance)
         S.push(star)
         var neighbours = []
@@ -186,7 +179,6 @@ function formWeb(starPairs, dataset)
     var stars = dataset["stars"]
     for(key in stars)
     {
-        console.log("Am I stuck here?")
         if(stars.hasOwnProperty(key))
         {
             var star = stars[key];
