@@ -19,13 +19,19 @@ MTHONALGO.solveStellarRoute = function(dataset) {
 
     // do your magic here
     var starPairs = []
+    var from = []
+    var to = []
+    var size = dataset.stars.length
+    var neighbours = []
+    while(size--) neighbours[size] = [];
+    var dist = []
     console.log("Before web formation")
-    formWeb(starPairs, dataset);
+    formWeb(from, to, dist, neighbours, dataset);
     console.log("After web formation")
     //basicWalker(parseInt(dataset["endPoint"]), dataset, starPairs, solution)
     var path = []
     var distance = []
-    dijkstra(dataset, starPairs, path, distance)
+    dijkstra(dataset, to, from, dist, neighbours, path, distance)
     console.log("Dijkstra done")
     var end = dataset["endPoint"]
     
@@ -56,15 +62,20 @@ function fillConnections(solution)
 
 function shortestPath(path, endPoint)
 {
+    console.log(endPoint)
+    //return
+    //console.log(path)
     var reversePath = []
     var finalPath = []
     reversePath.push(endPoint)
     var u = path[endPoint]
     while(!(u==0))
     {
-        console.log("Shortest path first while")
+        console.log("u: " + u)
+        console.log("path[u]: " + path[u])
         reversePath.push(u)
         u=path[u]
+        return
     }
     reversePath.push(0)
     while(reversePath.length > 0)
@@ -75,7 +86,7 @@ function shortestPath(path, endPoint)
     return finalPath
 }
 
-function dijkstra(dataset, starPairs, path, distance)
+function dijkstra(dataset, to, from, dist, neighbours, path, distance)
 {
     var stars = dataset["stars"]
     
@@ -86,15 +97,15 @@ function dijkstra(dataset, starPairs, path, distance)
     var S = []
     while(S.length < stars.length)
     {
-        console.log("Dijkstra while loop")
+        //console.log("Dijkstra while loop")
         var star = findSmallest(stars, S, distance)
         S.push(star)
-        var neighbours = []
-        neighbours = findNeighbours(star, dataset, starPairs,neighbours)
-        for(var neighbour in neighbours)
+        //var neighbours = [] // to/from/dist index of a connection to a neighbour
+        //neighbours = findNeighbours(star, to, from,neighbours)
+        //console.log("Star: " + star)
+        for(var i = 0; i < neighbours[star].length; i++)
         {
-            neighbour=neighbours[neighbour][1]
-            relax(star, neighbour, starPairs, distance, path)
+            relax(neighbours[star][i], to,from,dist, distance, path)
         }
     }
 }
@@ -103,14 +114,18 @@ function findSmallest(stars, S, distance)
 {
     var star
     var currStar
-    var shortestDist = 9999999
+    var shortestDist = 9999999999
     for(var i = 0; i < stars.length; i++)
     {
         currStar = stars[i]["_id"]
         if(S.indexOf(currStar) == -1)
         {
+            //console.log("S.indexOf(currStar) == 1")
+            //console.log(distance[currStar])
+            //console.log(shortestDist)
             if(distance[currStar]<shortestDist)
             {
+                console.log(distance[currStar]<shortestDist)
                 star = currStar
                 shortestDist = distance[currStar]
             }
@@ -129,16 +144,27 @@ function initializeSingleSource(dataset, distance, path)
     distance[0] = 0
 }
 
-function relax(u, v, starPairs, distance, path)
+function relax(i, to,from,dist, distance, path)
 {
-    if(distance[v] > distance[u] + getDist(u,v,starPairs))
+    var v = to[i]
+    var u = from[i]
+    /*console.log("Relax Start")
+    console.log("v: " + v)
+    console.log("Distance[v]: " + distance[v])
+    console.log("u: " + u)
+    console.log("Distance[u]: " + distance [u])
+    console.log("Dist[i]: " + dist[i])*/
+    if(distance[v] > distance[u] + dist[i])
     {
-        distance[v] = distance[u] + getDist(u,v,starPairs)
+        distance[v] = distance[u] + dist[i]
         path[v] = u
+        console.log("DISTANCE CHANGED!")
+        console.log("distance[" + v + "]: " + distance[v])
+        console.log("path["+v+"]: " + path[v])
     }
 }
 
-function getDist(star1, star2, starPairs)
+function getDist(star1, star2, starPairs) //Deprecated?
 {
     if(JSON.stringify([star1, star2]) in starPairs)
     {
@@ -156,7 +182,7 @@ function basicWalker(endPoint, dataset, starPairs, solution)
     var currStar = 0
     while(parseInt(currStar) != parseInt(endPoint))
     {
-        var neighbours = []
+        var neighbours = [] // neighbour changed to just a single star id, this is currently broken!
         neighbours = findNeighbours(currStar, dataset, starPairs, neighbours)
         var a = -1; //angle
         var dist = 0;
@@ -181,10 +207,10 @@ function basicWalker(endPoint, dataset, starPairs, solution)
     console.log("Path found!..Maybe")
 }
 
-function formWeb(starPairs, dataset)
+function formWeb(from, to, dist, neighbours, dataset)
 {
     var stars = dataset["stars"]
-    for(key in stars)
+    for(var key in stars)
     {
         console.log("Am I stuck here?")
         if(stars.hasOwnProperty(key))
@@ -199,14 +225,13 @@ function formWeb(starPairs, dataset)
                 if(stars.hasOwnProperty(key2))
                 {
                     var star2 = stars[key2]
-                    var dist = getDistance(star, star2)
-                    if(dist < 30)
+                    var tempDist = getDistance(star, star2)
+                    if(tempDist < 30)
                     {
-                        if(JSON.stringify([star2["_id"], star["_id"]]) in starPairs)
-                        {
-                            continue;
-                        }
-                        starPairs[JSON.stringify([star["_id"], star2["_id"]])] = parseFloat(dist)
+                        from.push(star._id)
+                        to.push(star2._id)
+                        dist.push(tempDist)
+                        neighbours[star._id].push(star2._id)
                     }
                 }
             }
@@ -242,15 +267,13 @@ function hasPosition(star)
     return false
 }
 
-function findNeighbours(star, dataset, starPairs, neighbours)
+function findNeighbours(star, to, neighbours)
 {
-    var stars = dataset["stars"]
-    for(var star2 in stars)
+    for(var i = 0; i < to.length; i++)
     {
-        star2 = stars[star2]["_id"]
-        if(JSON.stringify([star, star2]) in starPairs || JSON.stringify([star2, star]) in starPairs)
+        if(to[i] == star)
         {
-            neighbours.push([star, star2])
+            neighbours.push(i)
         }
     }
     return neighbours
