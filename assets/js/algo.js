@@ -855,7 +855,7 @@ function dijkstra(dataset, starPairs, path, distance)
         for(var neighbour in neighbours)
         {
             neighbour=neighbours[neighbour][1]
-            relax(star, neighbour, distance, path)
+            relax(star, neighbour, starPairs, distance, path)
             queue.queue([neighbour, distance[star]])
         }
     }
