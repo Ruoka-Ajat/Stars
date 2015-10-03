@@ -805,16 +805,26 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     return solution;
 }
 
+function fillConnections(solution)
+{
+    for(var i = 1; i < solution.path.length; i++)
+    {
+        solution.connections[i] = [solution.path[i-1], solution.path[i]]
+    }
+}
+
 function shortestPath(path, endPoint)
 {
-    var u = path[endPoint]
     var reversePath = []
     var finalPath = []
-    while(u!=0)
+    reversePath.push(endPoint)
+    var u = path[endPoint]
+    while(!(u==0))
     {
         reversePath.push(u)
         u=path[u]
     }
+    reversePath.push(0)
     while(reversePath.length > 0)
     {
         finalPath.push(reversePath.pop())
@@ -824,7 +834,6 @@ function shortestPath(path, endPoint)
 
 function dijkstra(dataset, starPairs, path, distance)
 {
-    console.log("Dijkstra start")
     var stars = dataset["stars"]
     
     var queue = new PriorityQueue({ comparator: function(a, b) { return a[1] - b[1]; }})
@@ -837,7 +846,6 @@ function dijkstra(dataset, starPairs, path, distance)
         star = stars[star]["_id"]
         queue.queue([star, distance[star]])
     }
-    console.log("Dijkstra built queue")
     while(S.length < stars.length)
     {
         var star = queue.dequeue()[0]
@@ -853,11 +861,31 @@ function dijkstra(dataset, starPairs, path, distance)
     }
 }
 
+function findSmallest(stars, S, distance)
+{
+    var star
+    var currStar
+    var shortestDist = 9999999
+    for(var i = 0; i < stars.length; i++)
+    {
+        currStar = stars[i]["_id"]
+        if(S.indexOf(currStar) == -1)
+        {
+            if(distance[currStar]<shortestDist)
+            {
+                star = currStar
+                shortestDist = distance[currStar]
+            }
+        }
+    }
+    return star
+}
+
 function initializeSingleSource(dataset, distance, path)
 {
     for(var i = 0; i < dataset.stars.length; i++)
     {
-        distance[i] = Infinity
+        distance[i] = 999999999
         path[i] = NaN
     }
     distance[0] = 0
@@ -874,11 +902,11 @@ function relax(u, v, starPairs, distance, path)
 
 function getDist(star1, star2, starPairs)
 {
-    if(starPairs.indexOf(JSON.stringify([star1, star2])) == -1)
+    if(JSON.stringify([star1, star2]) in starPairs)
     {
         return starPairs[JSON.stringify([star1, star2])]
     }
-    if(starPairs.indexOf(JSON.stringify([star2, star1])) == -1)
+    if(JSON.stringify([star2, star1]) in starPairs)
     {
         return starPairs[JSON.stringify([star2, star1])]
     }
@@ -932,14 +960,14 @@ function formWeb(starPairs, dataset)
                 if(stars.hasOwnProperty(key2))
                 {
                     var star2 = stars[key2]
-                    var dist = distance(star, star2)
+                    var dist = getDistance(star, star2)
                     if(dist < 30)
                     {
                         if(JSON.stringify([star2["_id"], star["_id"]]) in starPairs)
                         {
                             continue;
                         }
-                        starPairs[JSON.stringify([star["_id"], star2["_id"]])] = dist
+                        starPairs[JSON.stringify([star["_id"], star2["_id"]])] = parseFloat(dist)
                     }
                 }
             }
@@ -947,7 +975,7 @@ function formWeb(starPairs, dataset)
     }
 }
 // add your support functions in here
-function distance(star1, star2)
+function getDistance(star1, star2)
 {
     if(hasPosition(star1) && hasPosition(star2))
     {
