@@ -2,6 +2,7 @@
 // Algorithm template
 // www.solinor.fi
 
+
 var MTHONALGO = MTHONALGO || {};
 
 // required base function for finding the path in <dataset>
@@ -26,45 +27,66 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     return solution;
 }
 
-function getDist(star1, star2)
-{
-    if(JSON.stringify([star1, star2]) in starPairs)
-    {
-        return starPairs[JSON.stringify([star1, star2])]
-    }
-    if(JSON.stringify([star2, star1]) in starPairs)
-    {
-        reuturn starPairs[JSON.stringify([star2, star1])]
-    }
-    throw new Error("Failed to get distance between stars " + star1 + " and " + star2 ".")
-}
-
 function basicWalker(endPoint, dataset, starPairs, solution)
 {
+    var banList = [] 
     var currStar = 0
-    while(parseInt(currStar) != parseInt(endPoint))
+    var ii = 1;
+    path_old = solution["path"];
+    
+    while(parseInt(currStar) !== parseInt(endPoint))
+//for (i = 0; i < 14; i++)
     {
         var neighbours = []
         neighbours = findNeighbours(currStar, dataset, starPairs, neighbours)
         var a = -1; //angle
+        var a2 = 0;
         var dist = 0;
-        var pair
+        var pair;
         for(var neighbour in neighbours)
         {
+            console.log("Luupin kulma " + b)
+                console.log("pienin kulma " + a)
+               console.log(solution["path"].indexOf(neighbour[1]))
             neighbour = neighbours[neighbour]
             var b = angle(getStar(currStar, dataset), getStar(neighbour[1],dataset), getStar(endPoint, dataset))
-            if(b < a || a == -1)
+            if(b < a  || a == -1 )
+            {
+                
+            if (banList.indexOf(neighbour[1]) === -1)
             {
                 dist = starPairs[JSON.stringify(neighbour)]
                 a = b
+//                if (currStar in solution["path"] && !neighbour[1] in solution["path"])
+//                solution["path"].indexOf(currStar) != -1
+//                {
+//                a2 = b
+//                }
                 pair = neighbour
+            }   
             }
+            ii = ii + 1
+            
+    console.log(ii)
         }
+        
+        if (solution["path"].indexOf(pair[1]) != -1)
+        {
+        banList.push(currStar)
+         console.log("banniilista " + banList)
+    } 
         solution["length"] = solution["length"] + dist
+        
         solution["path"].push(pair[1])
+        //path_old[path_old.length] = 0
         currStar = pair[1]
         solution["connections"].push(pair)
-        console.log(currStar)
+        console.log("Nykyinen tähti " + currStar)
+        console.log("Naapureiden määrä " + neighbours.length)
+        console.log("etäisyys " + starPairs[JSON.stringify(neighbour)])
+        console.log("polku " + solution["path"])
+           console.log("polkuvanha3 " + path_old)
+           
     }
     console.log("Path found!..Maybe")
 }
