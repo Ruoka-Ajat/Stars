@@ -27,13 +27,21 @@ MTHONALGO.solveStellarRoute = function(dataset) {
     var end = dataset["endPoint"]
     
     solution.length = distance[end]
-    distance = []
+    //distance = []
     //starPairs = []
-    dataset = []
+    //dataset = []
     solution.path = shortestPath(path, end)
-    
+    //fillConnections(solution)
     // required return
     return solution;
+}
+
+function fillConnections(solution)
+{
+    for(var i = 1; i < solution.path.length; i++)
+    {
+        solution.connections[i] = [solution.path[i-1], solution.path[i]]
+    }
 }
 
 function shortestPath(path, endPoint)
